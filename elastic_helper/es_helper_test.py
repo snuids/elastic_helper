@@ -34,12 +34,12 @@ class TestClient(unittest.TestCase):
         logger = logging.getLogger()  
         logger.info("==> test_elastic_to_panda")
         try:            
-            host_params1 = {'host':'***************', 'port':9200, 'use_ssl':True} # RPINUM
+            host_params1 = {'host':'******', 'port':9200, 'use_ssl':True} # RPINUM
 
-            es = ES([host_params1], connection_class=RC, http_auth=("user","********"), use_ssl=True,verify_certs=False)
+            es = ES([host_params1], connection_class=RC, http_auth=("user","**********"), use_ssl=True,verify_certs=False)
 
             print(es.info())
-            res2=es_helper.elastic_to_dataframe(es,index="docker_stats*",scrollsize=1000,datecolumns=["read"]
+            res2=es_helper.elastic_to_dataframe(es,index="*******",scrollsize=1000,datecolumns=["read"]
                                 ,timestampfield="read"
                                 ,start=datetime.datetime.now()-datetime.timedelta(hours=1)
                                 ,end=datetime.datetime.now())
