@@ -24,8 +24,8 @@ dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
                                 ,_source=['read', 'cpu_percent', 'name']
                                 ,datecolumns=["read"]
                                 ,timestampfield="read"
-                                ,start=datetime.datetime.now()-datetime.timedelta(hours=1)
-                                ,end=datetime.datetime.now())                                                               
+                                ,start=datetime.now()-datetime.timedelta(hours=1)
+                                ,end=datetime.now())                                                               
 ```
 
 ## Example Pandas To Elastic
