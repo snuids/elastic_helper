@@ -11,7 +11,7 @@ pip install elastic-helper
 ```
 
 
-the PiPy page (https://pypi.org/project/elastic-helper/):
+the pypi page (https://pypi.org/project/elastic-helper/):
 
 ## Example Elastic To Pandas
 
