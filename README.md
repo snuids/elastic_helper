@@ -10,6 +10,9 @@ Two simple functions
 pip install elastic-helper
 ```
 
+
+the PiPy page (https://pypi.org/project/elastic-helper/):
+
 ## Example Elastic To Pandas
 
 ```python
