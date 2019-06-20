@@ -6,7 +6,8 @@ Two simple functions
 
 ## Installation
 
-pip install elastic-helper
+```sh
+pip install elastic-helper```
 
 ## Example Elastic To Pandas
 
