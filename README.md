@@ -24,7 +24,7 @@ dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
                                 ,_source=['read', 'cpu_percent', 'name']
                                 ,datecolumns=["read"]
                                 ,timestampfield="read"
-                                ,start=datetime.now()-datetime.timedelta(hours=1)
+                                ,start=datetime.now()-timedelta(hours=1)
                                 ,end=datetime.now())                                                               
 ```
 
