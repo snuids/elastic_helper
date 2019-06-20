@@ -18,7 +18,11 @@ the pypi page (https://pypi.org/project/elastic-helper/):
 ```python
 from elastic_helper import es_helper 
 
-dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*",scrollsize=1000,datecolumns=["read"]
+dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
+                                ,scrollsize=1000
+                                ,size=9843
+                                ,_source=['read', 'cpu_percent', 'name']
+                                ,datecolumns=["read"]
                                 ,timestampfield="read"
                                 ,start=datetime.datetime.now()-datetime.timedelta(hours=1)
                                 ,end=datetime.datetime.now())                                                               
