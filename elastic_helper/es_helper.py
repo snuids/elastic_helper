@@ -147,7 +147,6 @@ def dataframe_to_elastic(es, df):
     logger.info("LOADING DATA FRAME")
     logger.info("==================")
 
-
     if len([item for item, count in collections.Counter(df.columns).items() if count > 1]) > 0:
         logger.error("NNOOOOOOOOBBBB DUPLICATE COLUMN FOUND "*10)
 
