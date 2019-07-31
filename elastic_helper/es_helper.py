@@ -5,7 +5,6 @@ import pytz
 import tzlocal
 import pandas as pd
 import logging
-import datetime
 import collections
 
 
@@ -223,5 +222,10 @@ def dataframe_to_elastic(es, df):
         if len(reserrors) > 0:
             logger.info(reserrors)
 
+
     except:
         logger.error("Unable to store data in elastic", exc_info=True)
+
+    return {
+        'reserrors': reserrors
+    }
