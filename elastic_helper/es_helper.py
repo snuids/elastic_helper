@@ -7,6 +7,13 @@ import pandas as pd
 import logging
 import collections
 
+from cachetools import cached, LRUCache, TTLCache
+
+@cached(cache=TTLCache(maxsize=1024, ttl=300))
+def get_es_info(es):
+    print('get_es_info')
+    return es.info()
+
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, o):
@@ -37,6 +44,8 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
     recs = []
 
     try:
+        version = int(es_info.get('version').get('number').split('.')[0])
+
         finalquery = {
             "_source": _source,
             "query": {
@@ -78,7 +87,13 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
                         )
 
         sid = res['_scroll_id']
-        scroll_size = res['hits']['total']
+        
+        scroll_size = None
+        if version < 7:
+            scroll_size = res['hits']['total']
+        else:
+            scroll_size = res['hits']['total']['value']
+            
 
         array = []
         for res2 in res["hits"]["hits"]:
