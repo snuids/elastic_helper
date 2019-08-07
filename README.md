@@ -30,6 +30,9 @@ dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
 
 ## Example Pandas To Elastic
 
+Use **_index** column in the dataframe to specify the target index
+Use **_id** column in the dataframe to specify the id
+
 ```python
 from elastic_helper import es_helper 
 
