@@ -18,6 +18,7 @@ the pypi page (https://pypi.org/project/elastic-helper/):
 ### Parameters
 
 * **es** -- The elastic connection object
+* **index** -- The elastic index
 * **query** -- (optional) The elastic query in lucent format Example: "module: *"
 * **start** -- (optional) The time range start if any
 * **end** -- (optional) The time range start if any
