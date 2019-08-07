@@ -25,13 +25,13 @@ the pypi page (https://pypi.org/project/elastic-helper/):
 * **timestampfield** -- (optional) The timestamp field used by the start and stop parameters
 * **datecolumns** -- (optional) A collection of columns that must be converted to dates
 * **scrollsize** -- (optional) The size of the scroll to use
+* **size** -- (optional) The maximum number of records to retrieve
+* **_source** -- (optional) The fields to retrieve
 
 ```python
 from elastic_helper import es_helper 
 
 dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
-                                ,scrollsize=1000
-                                ,size=9843
                                 ,_source=['read', 'cpu_percent', 'name']
                                 ,datecolumns=["read"]
                                 ,timestampfield="read"
