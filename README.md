@@ -15,6 +15,16 @@ the pypi page (https://pypi.org/project/elastic-helper/):
 
 ## Example Elastic To Pandas
 
+### Parameters
+
+* **es** -- The elastic connection object
+* **query** -- (optional) The elastic query in lucent format Example: "module: *"
+* **start** -- (optional) The time range start if any
+* **end** -- (optional) The time range start if any
+* **timestampfield** -- (optional) The timestamp field used by the start and stop parameters
+* **datecolumns** -- (optional) A collection of columns that must be converted to dates
+* **scrollsize** -- (optional) The size of the scroll to use
+
 ```python
 from elastic_helper import es_helper 
 
