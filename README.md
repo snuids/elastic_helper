@@ -15,12 +15,23 @@ the pypi page (https://pypi.org/project/elastic-helper/):
 
 ## Example Elastic To Pandas
 
+### Parameters
+
+* **es** -- The elastic connection object
+* **index** -- The elastic index
+* **query** -- (optional) The elastic query in lucent format Example: "module: *"
+* **start** -- (optional) The time range start if any
+* **end** -- (optional) The time range start if any
+* **timestampfield** -- (optional) The timestamp field used by the start and stop parameters
+* **datecolumns** -- (optional) A collection of columns that must be converted to dates
+* **scrollsize** -- (optional) The size of the scroll to use
+* **size** -- (optional) The maximum number of records to retrieve
+* **_source** -- (optional) The fields to retrieve
+
 ```python
 from elastic_helper import es_helper 
 
 dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
-                                ,scrollsize=1000
-                                ,size=9843
                                 ,_source=['read', 'cpu_percent', 'name']
                                 ,datecolumns=["read"]
                                 ,timestampfield="read"
@@ -29,6 +40,9 @@ dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
 ```
 
 ## Example Pandas To Elastic
+
+* Use an **_index** column in the dataframe to specify the target index
+* Use an **_id** column in the dataframe to specify the id
 
 ```python
 from elastic_helper import es_helper 
