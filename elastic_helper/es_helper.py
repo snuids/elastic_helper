@@ -44,7 +44,7 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
     recs = []
 
     try:
-        version = int(get_es_info.get('version').get('number').split('.')[0])
+        version = int(get_es_info(es).get('version').get('number').split('.')[0])
 
         finalquery = {
             "_source": _source,
