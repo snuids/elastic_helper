@@ -47,6 +47,6 @@ dataframe=es_helper.elastic_to_dataframe(es,index="docker_stats*"
 ```python
 from elastic_helper import es_helper 
 
-dataframe=es_helper.dataframe_to_elastic(es,my_df)                                                               
+es_helper.dataframe_to_elastic(es,my_df)                                                               
 ```
 
