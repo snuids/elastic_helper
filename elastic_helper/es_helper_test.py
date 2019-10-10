@@ -21,6 +21,7 @@ from elasticsearch import Elasticsearch as ES, RequestsHttpConnection as RC
 logger = None
 
 server = os.environ["ES_HOST_TEST"]
+user = os.environ["ES_USER_TEST"]
 pwd = os.environ["ES_PWD_TEST"]
 
 
@@ -34,7 +35,7 @@ class TestClient(unittest.TestCase):
         Send Receive
         """
 
-        global server, pwd
+        global server, pwd, user
 
         print("==> test_elastic_to_panda")
         try:
@@ -42,7 +43,7 @@ class TestClient(unittest.TestCase):
                             'port': 9200, 'use_ssl': True}  # RPINUM
 
             es = ES([host_params1], connection_class=RC, http_auth=(
-                "user", pwd), use_ssl=True, verify_certs=False)
+                user, pwd), use_ssl=True, verify_certs=False)
 
             print(es.info())
             res2 = es_helper.elastic_to_dataframe(es, index="docker_stats*", scrollsize=1000, datecolumns=[
@@ -57,7 +58,7 @@ class TestClient(unittest.TestCase):
 
     def test_size(self):
 
-        global server, pwd
+        global server, pwd, user
 
         print("==> test_size")
         try:
@@ -65,7 +66,7 @@ class TestClient(unittest.TestCase):
                             'port': 9200, 'use_ssl': True}  # RPINUM
 
             es = ES([host_params1], connection_class=RC, http_auth=(
-                "user", pwd), use_ssl=True, verify_certs=False)
+                user, pwd), use_ssl=True, verify_certs=False)
 
             print(es.info())
             res2 = es_helper.elastic_to_dataframe(es, index="docker_stats*", size=10, timestampfield="read",
@@ -80,7 +81,7 @@ class TestClient(unittest.TestCase):
 
     def test_size_2(self):
 
-        global server, pwd
+        global server, pwd, user
 
         print("==> test_size_2")
         try:
@@ -88,7 +89,7 @@ class TestClient(unittest.TestCase):
                             'port': 9200, 'use_ssl': True}  # RPINUM
 
             es = ES([host_params1], connection_class=RC, http_auth=(
-                "user", pwd), use_ssl=True, verify_certs=False)
+                user, pwd), use_ssl=True, verify_certs=False)
 
             print(es.info())
             res2 = es_helper.elastic_to_dataframe(es, index="docker_stats*", size=345, scrollsize=100, timestampfield="read",
@@ -103,7 +104,7 @@ class TestClient(unittest.TestCase):
 
     def test_size_3(self):
 
-        global server, pwd
+        global server, pwd, user
 
         print("==> test_size_3")
         try:
@@ -111,7 +112,7 @@ class TestClient(unittest.TestCase):
                             'port': 9200, 'use_ssl': True}  # RPINUM
 
             es = ES([host_params1], connection_class=RC, http_auth=(
-                "user", pwd), use_ssl=True, verify_certs=False)
+                user, pwd), use_ssl=True, verify_certs=False)
 
             print(es.info())
             res2 = es_helper.elastic_to_dataframe(es, index="docker_stats*", size=110, scrollsize=300, timestampfield="read",
