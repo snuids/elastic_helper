@@ -11,7 +11,8 @@ from cachetools import cached, LRUCache, TTLCache
 
 @cached(cache=TTLCache(maxsize=1024, ttl=300))
 def get_es_info(es):
-    print('get_es_info')
+    logger = logging.getLogger()
+    logger.debug('get_es_info')
     return es.info()
 
 
