@@ -135,17 +135,20 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
         containertimezone = pytz.timezone(tzlocal.get_localzone().zone)
 
         for col in datecolumns:
-            if df[col].dtype == "int64":
-                df[col] = pd.to_datetime(
-                    df[col], unit='ms', utc=True).dt.tz_convert(containertimezone)
+            if col not in df.columns:
+                df[col] = None
             else:
-                df[col] = pd.to_datetime(
-                    df[col], utc=True).dt.tz_convert(containertimezone)
+                if df[col].dtype == "int64":
+                    df[col] = pd.to_datetime(
+                        df[col], unit='ms', utc=True).dt.tz_convert(containertimezone)
+                else:
+                    df[col] = pd.to_datetime(
+                        df[col], utc=True).dt.tz_convert(containertimezone)
 
     return df
 
 
-def dataframe_to_elastic(es, df):
+def dataframe_to_elastic(es, df, doc_type='doc'):
     """Converts a dataframe to an elastic collection to.
     The dataframe must have an "_index" column used to select the target index.
     Optionally an "_id" column can be used to specify the id of the record.
@@ -160,6 +163,9 @@ def dataframe_to_elastic(es, df):
 
     logger.debug("LOADING DATA FRAME")
     logger.debug("==================")
+
+    version = int(get_es_info(es).get('version').get('number').split('.')[0])
+
 
     if len([item for item, count in collections.Counter(df.columns).items() if count > 1]) > 0:
         logger.error("NNOOOOOOOOBBBB DUPLICATE COLUMN FOUND "*10)
@@ -178,8 +184,12 @@ def dataframe_to_elastic(es, df):
     for index, row in df.iterrows():
         action = {}
 
-        action["index"] = {"_index": row["_index"],
-                            "_type": "doc"}
+        if version < 7:
+            action["index"] = {"_index": row["_index"],
+                                "_type": doc_type}
+        else:
+            action["index"] = {"_index": row["_index"]}
+
         if "_id" in row:
             action["index"]["_id"] = row["_id"]
 
@@ -199,6 +209,12 @@ def dataframe_to_elastic(es, df):
                     obj["@timestamp"] = int(row[i])
                 else:
                     obj["@timestamp"] = int(row[i].timestamp()*1000)
+
+
+            # if((obj[i] is None) or 
+            #      (type(obj[i]) == str and obj[i] == 'NaN') or \
+            #      (type(obj[i]) == str and obj[i] == 'NaT')):
+            #     del obj[i]
 
         bulkbody += json.dumps(obj, cls=DateTimeEncoder) + "\r\n"
 
