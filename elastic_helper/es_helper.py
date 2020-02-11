@@ -29,7 +29,6 @@ class DateTimeEncoder(json.JSONEncoder):
 
 def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, timestampfield="@timestamp", datecolumns=[], _source=[], size=None, scrollsize=5000):
     """Convert an elastic collection to a dataframe.
-
     Parameters:
     es -- The elastic connection object
     query -- (optional) The elastic query
@@ -46,6 +45,8 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
     logger = logging.getLogger()
     array = []
     recs = []
+    scroll_ids=[]
+
 
     version = int(get_es_info(es).get('version').get('number').split('.')[0])
 
@@ -86,11 +87,11 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
     if size is not None and size < scrollsize:
         scrollsize = size
 
-    res = es.search(index=index, size=scrollsize, scroll='2m', body=finalquery
+    res = es.search(index=index, size=scrollsize, scroll='1m', body=finalquery
                     )
 
     sid = res['_scroll_id']
-    
+    scroll_ids.append(sid)
     scroll_size = None
     if version < 7:
         scroll_size = res['hits']['total']
@@ -112,6 +113,7 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
     while (scroll_size > 0):
         res = es.scroll(scroll_id=sid, scroll='2m')
         sid = res['_scroll_id']
+        scroll_ids.append(sid)
         scroll_size = len(res['hits']['hits'])
         logger.info("scroll size: " + str(scroll_size))
         logger.info("Next page:"+str(len(res['hits']['hits'])))
@@ -144,7 +146,8 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
                 else:
                     df[col] = pd.to_datetime(
                         df[col], utc=True).dt.tz_convert(containertimezone)
-
+                    
+    es.clear_scroll(body={'scroll_id': scroll_ids})
     return df
 
 
