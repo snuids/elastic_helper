@@ -184,49 +184,35 @@ def dataframe_to_elastic(es, df, doc_type='doc'):
 
     bulkbody = ""
 
-    for index, row in df.iterrows():
-        action = {}
+    df_json = json.loads(df.to_json(orient='records'))
+    
+    action = {}
+    action["index"] = {"_type": doc_type}
 
-        if version < 7:
-            action["index"] = {"_index": row["_index"],
-                                "_type": doc_type}
-        else:
-            action["index"] = {"_index": row["_index"]}
+    flag_unique_index = False
 
+    if len(df['_index'].unique() == 1):
+        flag_unique_index = True
+        
+        action["index"]["_index"] = df.iloc[0]["_index"]
+        
+    for row in df_json:
         if "_id" in row:
             action["index"]["_id"] = row["_id"]
-
+            
+        if not flag_unique_index:
+            action["index"]["_index"] = row["_index"]
+            
         bulkbody += json.dumps(action, cls=DateTimeEncoder) + "\r\n"
-        obj = {}
+        bulkbody += json.dumps({k:v for k,v in row.items() if k!='_id' and k!='_index' and v is not None}, 
+                            cls=DateTimeEncoder) + "\r\n"
 
-        for i in df.columns:
-
-            if((i != "_index") and (i != "_timestamp")and (i != "_id")):
-                if not (row[i] != row[i]) and \
-                   not (type(row[i]) == str and row[i] == 'NaN') and \
-                   not (type(row[i]) == str and row[i] == 'NaT') and \
-                   not (type(row[i]) == pd._libs.tslibs.nattype.NaTType):
-                    obj[i] = row[i]
-            elif(i == "_timestamp"):
-                if type(row[i]) == int:
-                    obj["@timestamp"] = int(row[i])
-                else:
-                    obj["@timestamp"] = int(row[i].timestamp()*1000)
-
-
-            # if((obj[i] is None) or 
-            #      (type(obj[i]) == str and obj[i] == 'NaN') or \
-            #      (type(obj[i]) == str and obj[i] == 'NaT')):
-            #     del obj[i]
-
-        bulkbody += json.dumps(obj, cls=DateTimeEncoder) + "\r\n"
 
         if len(bulkbody) > 512000:
             logger.debug("BULK READY:" + str(len(bulkbody)))
             # print(bulkbody)
             bulkres = es.bulk(bulkbody, request_timeout=30)
             logger.debug("BULK DONE")
-            currec = 0
             bulkbody = ""
 
             if(not(bulkres["errors"])):
