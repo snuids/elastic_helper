@@ -184,6 +184,9 @@ def dataframe_to_elastic(es, df, doc_type='doc'):
 
     bulkbody = ""
 
+    #df.columns=[_.replace("_timestamp","@timestamp") for _ in df.columns]
+    df.rename(columns={"_timestamp": "@timestamp"},inplace=True)
+
     df_json = json.loads(df.to_json(orient='records'))
     
     action = {}
