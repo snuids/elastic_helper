@@ -162,10 +162,13 @@ def dataframe_to_elastic(es, df, doc_type='doc'):
     df -- The dataframe
     """
 
-    logger = logging.getLogger(__name__)
+    #logger = logging.getLogger(__name__)
+    logger = logging.getLogger()
 
     logger.debug("LOADING DATA FRAME")
     logger.debug("==================")
+
+    print('coucou')
 
     version = int(get_es_info(es).get('version').get('number').split('.')[0])
 
@@ -190,7 +193,10 @@ def dataframe_to_elastic(es, df, doc_type='doc'):
     df_json = json.loads(df.to_json(orient='records'))
     
     action = {}
-    action["index"] = {"_type": doc_type}
+    if version > 7:
+        action["index"] = {}
+    else:    
+        action["index"] = {"_type": doc_type}
 
     flag_unique_index = False
 
@@ -213,8 +219,12 @@ def dataframe_to_elastic(es, df, doc_type='doc'):
 
         if len(bulkbody) > 512000:
             logger.debug("BULK READY:" + str(len(bulkbody)))
-            # print(bulkbody)
-            bulkres = es.bulk(bulkbody, request_timeout=30)
+            logger.info(version)
+            if version > 7:
+                bulkres = es.bulk(body=bulkbody, request_timeout=30)
+            else:
+                bulkres = es.bulk(bulkbody, request_timeout=30)
+
             logger.debug("BULK DONE")
             bulkbody = ""
 
@@ -228,7 +238,10 @@ def dataframe_to_elastic(es, df, doc_type='doc'):
 
     if len(bulkbody) > 0:
         logger.debug("BULK READY FINAL:" + str(len(bulkbody)))
-        bulkres = es.bulk(bulkbody)
+        if version > 7:
+            bulkres = es.bulk(body=bulkbody, request_timeout=30)
+        else:
+            bulkres = es.bulk(bulkbody, request_timeout=30)
         logger.debug("BULK DONE FINAL")
 
         if(not(bulkres["errors"])):
