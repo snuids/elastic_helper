@@ -134,7 +134,7 @@ def elastic_to_dataframe(es, index, query="*", start=None, end=None, sort=None, 
     df = pd.DataFrame(array)
 
     if len(datecolumns) > 0 and len(df) > 0:
-        containertimezone = pytz.timezone(tzlocal.get_localzone().zone)
+        containertimezone = pytz.timezone(tzlocal.get_localzone_name())
 
         for col in datecolumns:
             if col not in df.columns:
