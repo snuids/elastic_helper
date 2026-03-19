@@ -1,0 +1,55 @@
+# .github/workflows/publish.yml
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*.*.*"  # Déclenché uniquement sur les tags type v1.2.3
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Run tests
+        run: pytest
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi          # Environnement GitHub lié au Trusted Publisher
+    permissions:
+      id-token: write          # Requis pour OIDC / Trusted Publishing
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+        # GITHUB_REF_NAME = "v1.2.3"  →  VERSION = "1.2.3"
+
+      - name: Set version in pyproject.toml
+        run: sed -i "s/^version = .*/version = \"${{ env.VERSION }}\"/" pyproject.toml
+
+      - name: Install build tools
+        run: pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
