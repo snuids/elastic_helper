@@ -14,7 +14,7 @@ from datetime import timedelta
 from elasticsearch import helpers
 from elastic_helper import es_helper
 
-from elasticsearch import Elasticsearch as ES, RequestsHttpConnection as RC
+from elasticsearch import Elasticsearch as ES
 
 # git tag 1.0.1 -m "PyPi tag"
 # git push --tags origin master
@@ -48,8 +48,7 @@ class TestClient(unittest.TestCase):
             host_params1 = {'host': server,
                             'port': 9200, 'use_ssl': True}  # RPINUM
 
-            es = ES([host_params1], connection_class=RC, http_auth=(
-                user, pwd), use_ssl=True, verify_certs=False)
+            es = ES([host_params1], http_auth=(user, pwd), use_ssl=True, verify_certs=False)
 
             print(es.info())
             res2 = es_helper.elastic_to_dataframe(es, index="docker_stats*", scrollsize=1000, datecolumns=[
