@@ -2,3 +2,19 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "elastic-helper"
+version = "0.0.0"  # placeholder, écrasé par le tag
+description = "..."
+requires-python = ">=3.8"
+dependencies = [
+    "requests",  # dépendances runtime de ta lib
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["elastic_helper"]
